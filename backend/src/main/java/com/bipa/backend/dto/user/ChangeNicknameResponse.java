@@ -1,11 +1,11 @@
-package com.bipa.backend.dto;
+package com.bipa.backend.dto.user;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
 @Data
 @AllArgsConstructor
-public class FirstLoginResponse {
+public class ChangeNicknameResponse {
     private String status;
-    private Long id;
+    private String message;
 }

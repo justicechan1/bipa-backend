@@ -1,4 +1,4 @@
-package com.bipa.backend.dto;
+package com.bipa.backend.dto.user;
 
 import lombok.Data;
 
