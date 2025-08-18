@@ -27,18 +27,32 @@ public class ShowPlaceService {
 
     public List<PlaceVisitDto> getPlacesWithVisit(Long userId, String divisionRaw) {
         String division = normalizeDivision(divisionRaw);
-        // 카페 or 음식점 분류
+
         if ("cafe".equals(division)) {
             List<CafePlace> places = cafeRepo.findAll();
             Set<Long> visited = visitedSet(userId, division);
+
             return places.stream()
+                    .sorted(
+                            Comparator
+                                    .comparing((CafePlace p) -> visited.contains(p.getId())) // false → true
+                                    .reversed() // true 먼저
+                                    .thenComparing(CafePlace::getPlaceName, Comparator.nullsLast(String.CASE_INSENSITIVE_ORDER))
+                    )
                     .map(p -> new PlaceVisitDto(p.getPlaceName(), visited.contains(p.getId())))
                     .collect(Collectors.toList());
 
         } else if ("restaurant".equals(division)) {
             List<RestaurantPlace> places = restRepo.findAll();
             Set<Long> visited = visitedSet(userId, division);
+
             return places.stream()
+                    .sorted(
+                            Comparator
+                                    .comparing((RestaurantPlace p) -> visited.contains(p.getId()))
+                                    .reversed()
+                                    .thenComparing(RestaurantPlace::getPlaceName, Comparator.nullsLast(String.CASE_INSENSITIVE_ORDER))
+                    )
                     .map(p -> new PlaceVisitDto(p.getPlaceName(), visited.contains(p.getId())))
                     .collect(Collectors.toList());
         }
