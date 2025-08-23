@@ -17,6 +17,7 @@ public class CharacterResponse {
         private int exp;
         private int money;
         private int hungry_gauge;
+        private int heart_gauge;
         private int max_actopus;
         private int max_fig;
         private int max_yudal;

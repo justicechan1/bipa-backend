@@ -38,4 +38,10 @@ public class CafePlace {
     private String imageUrl;  //이미지URL
 
     private String division;  //카테고리 분류
+
+    @Column(name = "first_price")
+    private Integer firstPrice;  //첫번째 메뉴 가격
+
+    @Column(name = "first_menu")
+    private String firstMenu;  //첫번째 메뉴 이름
 }

@@ -82,6 +82,7 @@ public class UserService {
                 character.getExp(),
                 character.getMoney(),
                 character.getHungryGauge(),
+                character.getHeartGauge(),
                 character.getMaxActopus(),
                 character.getMaxFig(),
                 character.getMaxYudal(),
