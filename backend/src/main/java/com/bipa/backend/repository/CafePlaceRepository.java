@@ -10,7 +10,7 @@ import org.springframework.data.jpa.repository.*;
 public interface CafePlaceRepository extends JpaRepository<CafePlace, Long> {
     Optional<CafePlace> findByPlaceName(String placeName);
     Optional<CafePlace> findTop1ByPlaceNameIgnoreCaseOrderByIdAsc(String placeName);
-    List<CafePlace> findTop50ByPlaceNameContainingIgnoreCaseOrCategoryContainingIgnoreCaseOrDivisionContainingIgnoreCase(
+    List<CafePlace> findByPlaceNameContainingIgnoreCaseOrCategoryContainingIgnoreCaseOrDivisionContainingIgnoreCase(
             String q1, String q2, String q3
     );
     @Query("""

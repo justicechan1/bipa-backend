@@ -29,11 +29,11 @@ public class SearchPlaceService {
 
         // 1) 세 테이블에서 검색
         List<CafePlace> cafes = cafeRepo
-                .findTop50ByPlaceNameContainingIgnoreCaseOrCategoryContainingIgnoreCaseOrDivisionContainingIgnoreCase(q, q, q);
+                .findByPlaceNameContainingIgnoreCaseOrCategoryContainingIgnoreCaseOrDivisionContainingIgnoreCase(q, q, q);
         List<RestaurantPlace> rests = restRepo
-                .findTop50ByPlaceNameContainingIgnoreCaseOrCategoryContainingIgnoreCaseOrDivisionContainingIgnoreCase(q, q, q);
+                .findByPlaceNameContainingIgnoreCaseOrCategoryContainingIgnoreCaseOrDivisionContainingIgnoreCase(q, q, q);
         List<TourPlace> tours = tourRepo
-                .findTop50ByPlaceNameContainingIgnoreCaseOrCategoryContainingIgnoreCaseOrDivisionContainingIgnoreCase(q, q, q);
+                .findByPlaceNameContainingIgnoreCaseOrCategoryContainingIgnoreCaseOrDivisionContainingIgnoreCase(q, q, q);
 
         // 2) place_name만 추출 + 중복 제거(순서 보존) + 정렬
         Set<String> names = new LinkedHashSet<>();

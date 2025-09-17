@@ -10,7 +10,7 @@ import com.bipa.backend.dto.game.ShopRow;
 public interface RestaurantPlaceRepository extends JpaRepository<RestaurantPlace, Long> {
     Optional<RestaurantPlace> findByPlaceName(String placeName);
     Optional<RestaurantPlace> findTop1ByPlaceNameIgnoreCaseOrderByIdAsc(String placeName);
-    List<RestaurantPlace> findTop50ByPlaceNameContainingIgnoreCaseOrCategoryContainingIgnoreCaseOrDivisionContainingIgnoreCase(
+    List<RestaurantPlace> findByPlaceNameContainingIgnoreCaseOrCategoryContainingIgnoreCaseOrDivisionContainingIgnoreCase(
             String q1, String q2, String q3
     );
     @Query("""
