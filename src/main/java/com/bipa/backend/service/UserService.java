@@ -22,34 +22,68 @@ public class UserService {
     private final UserCharacterRepository characterRepository;
 
     /**
-     * 최초 로그인 처리: 없으면 생성, 있으면 해당 id 반환
+     * 로그인 시 호출: 사용자 upsert + 캐릭터를 보장(없으면 생성)
      */
     @Transactional
     public Long firstLogin(FirstLoginRequest req) {
-        FirstLoginRequest.UserDto dto = req.getUser();
+        var dto = req.getUser();
 
-        // 이미 존재하면 그대로 반환
-        Optional<User> existing = userRepository.findById(dto.getId());
-        if (existing.isPresent()) {
-            return existing.get().getId();
-        }
+        final boolean[] created = { false };
+        User user = userRepository.findById(dto.getId()).orElseGet(() -> {
+            User u = new User();
+            u.setId(dto.getId());
+            u.setCreatedAt(LocalDateTime.now());
+            // 최초 생성시에만 소셜 닉네임을 초기값으로 사용
+            if (dto.getNickname() != null && !dto.getNickname().isBlank()) {
+                u.setNickname(dto.getNickname().trim());
+            }
+            created[0] = true;
+            return u;
+        });
 
-        // 새 사용자 생성
-        User user = new User();
-        user.setId(dto.getId());
-        user.setNickname(dto.getNickname());
+        // ✅ 기존 유저는 닉네임을 절대 덮지 않음
         user.setConnectedAt(dto.getConnected_at());
-        user.setCreatedAt(LocalDateTime.now());
         userRepository.save(user);
+
+        ensureDefaultCharacter(user.getId());
+        return user.getId();
+    }
+
+    /**
+     * 사용자의 캐릭터가 없으면 기본 캐릭터 생성 후 반환
+     */
+    @Transactional
+    public UserCharacter ensureDefaultCharacter(Long userId) {
+        // 사용자 조회
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new NotFoundException("USER_NOT_FOUND"));
+
+        // 이미 캐릭터가 있으면 그대로 반환
+        Optional<UserCharacter> existing = characterRepository.findByUser(user);
+        if (existing.isPresent()) {
+            return existing.get();
+        }
 
         // 기본 캐릭터 생성
         UserCharacter character = new UserCharacter();
         character.setUser(user);
-        // 기본값(레벨/경험치/머니/게이지 등)이 null이면 엔티티에서 @Column(nullable=false) + default 0 권장
-        character.setUpdatedAt(LocalDateTime.now());
-        characterRepository.save(character);
 
-        return user.getId();
+        // 기본값(엔티티 컬럼이 NOT NULL이면 안전하게 0/1 등으로 초기화)
+        character.setLevel(1);
+        character.setExp(0);
+        character.setMoney(0);
+        character.setHungryGauge(0);
+        character.setHeartGauge(0);
+        character.setMaxActopus(0);
+        character.setMaxFig(0);
+        character.setMaxYudal(0);
+        character.setMaxFish(0);
+        character.setUpdatedAt(LocalDateTime.now());
+
+        // ※ Place가 필수라면 여기서 기본 장소 세팅
+        // character.setPlace(placeRepository.findById(1L).orElseThrow(...));
+
+        return characterRepository.save(character);
     }
 
     /**
@@ -66,6 +100,7 @@ public class UserService {
 
     /**
      * 캐릭터 정보 조회
+     *  - 캐릭터가 반드시 있어야 한다면 ensureDefaultCharacter(userId)로 대체 가능
      */
     @Transactional
     public CharacterResponse.Characters getCharacterByUserId(Long userId) {

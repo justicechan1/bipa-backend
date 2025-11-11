@@ -15,13 +15,18 @@ import java.time.LocalDateTime;
 public class User {
 
     @Id
-    private Long id;  //사용자 카카오 고유 ID
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-    private String nickname;  //사용자 닉네임
+    @Column(unique = true, nullable = false)
+    private Long kakaoId;
 
-    private LocalDateTime connectedAt;  //카카오 연결 시간
+    private String nickname;        // 사용자 닉네임
+    private String email;           // (추가) 카카오 계정 이메일
+    private String profileImage;    // (추가) 프로필 이미지 URL
 
-    private LocalDateTime createdAt;  //가입 일시
+    private LocalDateTime connectedAt;  // 카카오 연결 시간
+    private LocalDateTime createdAt;    // 가입 일시
 
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
     private UserCharacter character;
