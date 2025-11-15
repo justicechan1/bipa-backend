@@ -31,26 +31,30 @@ public class SelectPlaceService {
         // 1) 카페에서 먼저 찾고, 없으면 음식점에서 찾기 (이름 대소문자 무시)
         Optional<CafePlace> cafe = cafeRepo.findTop1ByPlaceNameIgnoreCaseOrderByIdAsc(name);
         if (cafe.isPresent()) {
+            CafePlace c = cafe.get();
             return new SelectPlaceResponse(
                     new SelectPlaceResponse.Place(
-                            cafe.get().getPlaceName(),
-                            cafe.get().getCategory(),
-                            cafe.get().getAddress(),
-                            cafe.get().getBusinessHours(),
-                            parseMenuArray(cafe.get().getMenu())
+                            c.getPlaceName(),
+                            c.getCategory(),
+                            c.getAddress(),
+                            c.getBusinessHours(),
+                            parseJsonArray(c.getMenu()),      // 메뉴
+                            parseJsonArray(c.getImageUrl())   // 이미지 URL 리스트
                     )
             );
         }
 
         Optional<RestaurantPlace> rest = restRepo.findTop1ByPlaceNameIgnoreCaseOrderByIdAsc(name);
         if (rest.isPresent()) {
+            RestaurantPlace r = rest.get();
             return new SelectPlaceResponse(
                     new SelectPlaceResponse.Place(
-                            rest.get().getPlaceName(),
-                            rest.get().getCategory(),
-                            rest.get().getAddress(),
-                            rest.get().getBusinessHours(),
-                            parseMenuArray(rest.get().getMenu())
+                            r.getPlaceName(),
+                            r.getCategory(),
+                            r.getAddress(),
+                            r.getBusinessHours(),
+                            parseJsonArray(r.getMenu()),      // 메뉴
+                            parseJsonArray(r.getImageUrl())   // 이미지 URL 리스트
                     )
             );
         }
@@ -59,14 +63,15 @@ public class SelectPlaceService {
         throw new PlaceNotFoundException("No place found with name: " + name);
     }
 
-    private List<String> parseMenuArray(String menuJson) {
-        if (menuJson == null || menuJson.isBlank()) return Collections.emptyList();
+    /** 메뉴 / 이미지 공용 JSON 배열 파서 */
+    private List<String> parseJsonArray(String json) {
+        if (json == null || json.isBlank()) return Collections.emptyList();
         try {
-            // DB에 JSON(예: ["갈비탕","곰탕"]) 으로 저장된 전제
-            return objectMapper.readValue(menuJson, new TypeReference<List<String>>() {});
+            // 예: ["갈비탕","곰탕"] 또는 ["https://.../a.jpg","https://.../b.jpg"]
+            return objectMapper.readValue(json, new TypeReference<List<String>>() {});
         } catch (Exception e) {
-            // 혹시 파싱 실패 시 "a | b | c" 같은 파이프로 들어온 케이스 방어
-            String normalized = menuJson.replace("[", "")
+            // 혹시 파싱 실패 시 "a | b | c" 또는 "a,b,c" 같은 형태 방어
+            String normalized = json.replace("[", "")
                     .replace("]", "")
                     .replace("\"", "")
                     .trim();

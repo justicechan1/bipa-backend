@@ -21,5 +21,7 @@ public class SelectPlaceResponse {
         @JsonProperty("business_hours")
         private String businessHours;
         private List<String> menu;
+        @JsonProperty("image_url")
+        private List<String> imageUrl;
     }
 }

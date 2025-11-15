@@ -1,6 +1,7 @@
 package com.bipa.backend.dto.place;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.persistence.Column;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -17,5 +18,8 @@ public class SearchPlaceResponse {
     public static class Result {
         @JsonProperty("place_name")
         private String placeName;
+
+        @JsonProperty("image_url")
+        private String imageUrl;
     }
 }
