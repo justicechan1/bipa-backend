@@ -14,7 +14,8 @@
 
 | 항목 | 내용 |
 |---|---|
-| 개발 기간 | 2025.08 ~ 2025.11 |
+| 개발 기간 | 2025.07 ~ 2025.11 |
+| 인원 | BE 1명 / FE 1명 / Unity 1명 |
 | 담당 (정의찬) | Back-end 전담 |
 | 수상 | 2025 교내 공학작품 전시회 우수상 |
 | 프론트엔드 | [bipa_frontend](https://github.com/justicechan1/bipa_frontend) |
